@@ -1,13 +1,12 @@
 module FSD where
 import Prelude
 import Image
-import Data.Word
 import ErrorsTables
 import Debug.Trace
-getErrMatrix :: Word8 -> [[Word8]]
-getErrMatrix err = map (map (\x -> fromIntegral x * round (fromIntegral err / fromIntegral fsdDenominator) )) fsd
+getErrMatrix :: Int -> [[Int]]
+getErrMatrix err = map (map (\x -> fromIntegral x * (err `div` fsdDenominator) )) fsd
 
-fitWithZeros :: [[Word8]] -> Int -> Int -> Int -> [[Word8]]
+fitWithZeros :: [[Int]] -> Int -> Int -> Int -> [[Int]]
 fitWithZeros [[]] _ _ _ = [[]]
 fitWithZeros curr col centerCol targetNum =  [replicate ((targetNum - max 0 elementsAfterCurrRow) - length reducedRow) 0 
                                              ++ reducedRow  
@@ -21,25 +20,30 @@ removeNColsEnd :: [a] -> Int -> [a]
 removeNColsEnd [] _ = []
 removeNColsEnd row n = take (length row - n) row
 
-sumMatrix :: [[Word8]] -> [[Word8]] -> [[Word8]]
+sumMatrix :: [[Int]] -> [[Int]] -> [[Int]]
 sumMatrix [[]] b = b
 sumMatrix a [[]] = a
 sumMatrix a b = zipWith (zipWith (+)) a b
 
-calculateNewValue :: Word8 -> Word8 -> Word8
-calculateNewValue curr maxValue = round (fromIntegral curr / fromIntegral maxValue) * maxValue
+calculateNewValue :: Int -> Int -> Int
+calculateNewValue curr maxValue = ( curr `div` (maxValue `div` 2)) * maxValue
 
-updateMatrix :: [Rgb] -> Word8 -> Int -> Int -> [[Word8]] -> [[Word8]]
+updateMatrix :: [Rgb] -> Int -> Int -> Int -> [[Int]] -> [[Int]]
 updateMatrix [x] maxColor col centerCol currErr = sumMatrix currErr (fitWithZeros newErrMatrix col centerCol (length (head currErr))) 
-    where newErrMatrix = getErrMatrix (red x - calculateNewValue (red x) maxColor)
+    where 
+        newValue = red x + head currErr !! col
+        newErrMatrix = getErrMatrix (red x - calculateNewValue newValue maxColor)
 updateMatrix (x:xs) maxColor col centerCol currErr = updateMatrix xs maxColor (col + 1) centerCol (sumMatrix currErr (fitWithZeros newErrMatrix col centerCol (length (head currErr)))) 
-    where newErrMatrix = getErrMatrix (red x - calculateNewValue (red x) maxColor)
+    where
+        newValue = red x + head currErr !! col 
+        newErrMatrix = getErrMatrix (red x - calculateNewValue newValue maxColor)
 
-updateRGBMatrix :: [[Rgb]] -> Word8 -> Int -> Int -> [[Word8]] -> [[Rgb]]
-updateRGBMatrix matrix maxColor centerCol (-1) initialErrMatrix = updateRGBMatrix matrix maxColor centerCol 0 (updateMatrix (head matrix) maxColor 0 centerCol initialErrMatrix)
-updateRGBMatrix [row] maxColor centerCol rowIndex initialErrMatrix = [[rgbFromWord8 (initialErrMatrix !! mod rowIndex (length initialErrMatrix) !! col) | col <- [0..length row - 1]]]
-updateRGBMatrix (row:remaining) maxColor centerCol rowIndex initialErrMatrix = newRow : updateRGBMatrix remaining maxColor centerCol (rowIndex + 1) (updateMatrix row maxColor 0 centerCol initialErrMatrix)
-    where newRow = [rgbFromWord8 (initialErrMatrix !! mod rowIndex (length initialErrMatrix) !! col) | col <- [0..length row - 1]]
+updateRGBMatrix :: [[Rgb]] -> Int -> Int -> Int -> [[Int]] -> [[Rgb]]
+updateRGBMatrix [row] maxColor centerCol rowIndex initialErrMatrix = newRow
+    where newRow = [[rgbFromInt (abs (((red (row !! col) + (initialErrMatrix !! mod rowIndex (length initialErrMatrix) !! col)) `div`  (maxColor `div` 2) ) * maxColor)) | col <- [0..length row - 1]]]
+updateRGBMatrix (row:remaining) maxColor centerCol rowIndex initialErrMatrix = newRow : updateRGBMatrix remaining maxColor centerCol (rowIndex + 1) (drop 1 updatedErr ++ [replicate (length (head updatedErr)) 0])
+    where newRow = [rgbFromInt (abs (((red (row !! col) + (updatedErr !! mod rowIndex (length updatedErr) !! col)) `div` (maxColor `div` 2)) * maxColor)) | col <- [0..length row - 1]]
+          updatedErr = updateMatrix row maxColor 0 centerCol initialErrMatrix
 
 applyFSD :: Image -> Image 
 applyFSD (Image width height maxColor content) = Image width height maxColor (updateRGBMatrix content maxColor fsdCenterCol (-1) [replicate (length (head content)) 0, replicate (length (head content)) 0])

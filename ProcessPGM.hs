@@ -1,9 +1,8 @@
 module ProcessPGM (savePGM, loadPGM) where
 import Image
-import Data.Word ( Word8 )
 import Debug.Trace
 
-textToImage :: String -> [String] -> Int -> Int -> Word8 -> [[Rgb]] -> [Rgb] -> Image
+textToImage :: String -> [String] -> Int -> Int -> Int -> [[Rgb]] -> [Rgb] -> Image
 textToImage format [] width height maxColor content currentContent
   | not (null currentContent) = Image width height maxColor (tail content ++ [currentContent])
   | otherwise = Image width height maxColor (tail content)
@@ -13,7 +12,7 @@ textToImage format (x:remainingContent) width height maxColor content currentCon
                     (tail (tail (tail remainingContent)))
                     (read (head remainingContent) :: Int)
                     (read (head (tail remainingContent)) :: Int)
-                    (read (head (tail (tail remainingContent))) :: Word8)
+                    (read (head (tail (tail remainingContent))) :: Int)
                     content
                     currentContent
   | otherwise =
@@ -26,7 +25,7 @@ textToImage format (x:remainingContent) width height maxColor content currentCon
             height
             maxColor 
             (content ++ [currentContent]) 
-            [rgbFromWord8 (read x :: Word8)]
+            [rgbFromInt (read x :: Int)]
       else 
           textToImage 
             format
@@ -35,7 +34,7 @@ textToImage format (x:remainingContent) width height maxColor content currentCon
             height
             maxColor
             content
-            (currentContent ++ [rgbFromWord8 (read x :: Word8)])
+            (currentContent ++ [rgbFromInt (read x :: Int)])
 
 savePGM :: FilePath -> Image -> IO ()
 savePGM path (Image width height maxColor content) =
