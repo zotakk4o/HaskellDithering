@@ -1,6 +1,9 @@
-module ProcessPBM where
-import Image
+module ProcessPBM (savePBM) where
+import Image hiding(imageToString)
 
-saveImage :: FilePath -> Image -> IO ()
-saveImage path (Image width height content) =
+imageToString :: [[Rgb]] -> [String]
+imageToString strs = [ show (red x) | x <- concat strs]
+
+savePBM :: FilePath -> Image -> IO ()
+savePBM path (Image width height maxColor content) =
   writeFile path (unlines (["P2", show width, show height] ++ imageToString content))

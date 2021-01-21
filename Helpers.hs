@@ -26,3 +26,8 @@ isPGM str = isSuffixOf ".pgm" str
 isPBM :: String -> Bool
 isPBM [] = False 
 isPBM str = isSuffixOf ".pbm" str
+
+split :: String -> Char -> [String]
+split [] _ = []
+split str c = newStr : split (drop (length newStr + 1) str) c 
+    where newStr = takeWhile (/= c) str

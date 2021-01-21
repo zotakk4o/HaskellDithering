@@ -13,6 +13,6 @@ isCommandValid [] _ = False
 isCommandValid cmd@(x:xs) op
     | x == op && not (null xs) && (head xs) == ' ' && not (null (tail xs)) && isFileValid (tail xs) = True
     | op == 'n' && not (isNumber cmd) = False
-    | let choice = strToInt cmd in op == 'n' && choice < 1 || choice > 11 = True
+    | let choice = strToInt cmd in op == 'n' && choice >= 1 && choice <= 11 = True
     | otherwise = False
 

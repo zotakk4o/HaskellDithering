@@ -11,6 +11,7 @@ data Rgb = Rgb
 data Image = Image
   { width :: Int,
     height :: Int,
+    maxColor :: Word8,
     content :: [[Rgb]]
   }
   deriving (Show, Read)
@@ -22,33 +23,11 @@ convertRGBtoGrayscale (Rgb red green blue) = let grayscale =
                                                             0.11 * toRational blue)
                                              in Rgb grayscale grayscale grayscale
 
-rgbToString :: Rgb -> String
-rgbToString (Rgb red green blue) = show red ++ " " ++ show green ++ " " ++ show blue
-
 imageToString :: [[Rgb]] -> [String]
-imageToString strs = [rgbToString x | x <- concat strs]
+imageToString strs = [pixelToString px | px <- concat strs]
+      
+rgbFromWord8 :: Word8 -> Rgb
+rgbFromWord8 value = Rgb value value value
 
-textToImage :: String -> [String] -> Int -> Int -> [[Rgb]] -> [Rgb] -> Image
-textToImage format [] width height content currentContent
-  | not (null currentContent) = Image width height (tail content ++ [currentContent])
-  | otherwise = Image width height (tail content)
-textToImage format (x : y : z : remainingContent) width height content currentContent
-  | x == format = textToImage format (tail remainingContent) (read y :: Int) (read z :: Int) content currentContent
-  | otherwise =
-    if length currentContent == width
-      then 
-          textToImage
-            format
-            remainingContent 
-            width 
-            height 
-            (content ++ [currentContent]) 
-            [Rgb (read x :: Word8) (read y :: Word8) (read z :: Word8)]
-      else 
-          textToImage 
-            format
-            remainingContent 
-            width 
-            height 
-            content
-            (currentContent ++ [Rgb (read x :: Word8) (read y :: Word8) (read z :: Word8)])
+pixelToString :: Rgb -> String 
+pixelToString (Rgb red green blue) = show red ++ " " ++ show green ++ " " ++ show blue
