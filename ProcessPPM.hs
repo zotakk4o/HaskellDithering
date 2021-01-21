@@ -1,8 +1,7 @@
 module ProcessPPM (savePPM, loadPPM) where 
 import Image
-import Data.Word ( Word8 )
 
-textToImage :: String -> [String] -> Int -> Int -> Word8 -> [[Rgb]] -> [Rgb] -> Image
+textToImage :: String -> [String] -> Int -> Int -> Int -> [[Rgb]] -> [Rgb] -> Image
 textToImage format [] width height maxColor content currentContent
   | not (null currentContent) = Image width height maxColor (tail content ++ [currentContent])
   | otherwise = Image width height maxColor (tail content)
@@ -12,7 +11,7 @@ textToImage format (x : y : z : remainingContent) width height maxColor content 
                     (tail remainingContent)
                     (read y :: Int)
                     (read z :: Int)
-                    (read (head remainingContent) :: Word8)
+                    (read (head remainingContent) :: Int)
                     content
                     currentContent
   | otherwise =
@@ -25,7 +24,7 @@ textToImage format (x : y : z : remainingContent) width height maxColor content 
             height
             maxColor 
             (content ++ [currentContent]) 
-            [convertRGBtoGrayscale (Rgb (read x :: Word8) (read y :: Word8) (read z :: Word8))]
+            [convertRGBtoGrayscale (Rgb (read x :: Int) (read y :: Int) (read z :: Int))]
       else 
           textToImage 
             format
@@ -34,7 +33,7 @@ textToImage format (x : y : z : remainingContent) width height maxColor content 
             height
             maxColor
             content
-            (currentContent ++ [convertRGBtoGrayscale (Rgb (read x :: Word8) (read y :: Word8) (read z :: Word8))])
+            (currentContent ++ [convertRGBtoGrayscale (Rgb (read x :: Int) (read y :: Int) (read z :: Int))])
 
 savePPM :: FilePath -> Image -> IO ()
 savePPM path (Image width height maxColor content) =

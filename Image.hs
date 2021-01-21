@@ -1,17 +1,16 @@
 module Image where
-import Data.Word (Word8)
 
 data Rgb = Rgb
-  { red :: Word8,
-    green :: Word8,
-    blue :: Word8
+  { red :: Int,
+    green :: Int,
+    blue :: Int
   }
   deriving (Show, Read)
 
 data Image = Image
   { width :: Int,
     height :: Int,
-    maxColor :: Word8,
+    maxColor :: Int,
     content :: [[Rgb]]
   }
   deriving (Show, Read)
@@ -26,8 +25,8 @@ convertRGBtoGrayscale (Rgb red green blue) = let grayscale =
 imageToString :: [[Rgb]] -> [String]
 imageToString strs = [pixelToString px | px <- concat strs]
       
-rgbFromWord8 :: Word8 -> Rgb
-rgbFromWord8 value = Rgb value value value
+rgbFromInt :: Int -> Rgb
+rgbFromInt value = Rgb value value value
 
 pixelToString :: Rgb -> String 
 pixelToString (Rgb red green blue) = show red ++ " " ++ show green ++ " " ++ show blue
