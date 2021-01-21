@@ -51,10 +51,10 @@ updateMatrix (x:xs) maxColor col centerCol currErr = updateMatrix xs maxColor (c
 updateRGBMatrix :: [[Rgb]] -> Int -> Int -> Int -> [[Int]] -> [[Rgb]]
 updateRGBMatrix [row] maxColor centerCol rowIndex initialErrMatrix = newRow
     where
-        newRow = [[rgbFromInt (calculateNewValue (clamp0Max (red (row !! col) + (initialErrMatrix !! mod rowIndex (length initialErrMatrix) !! col)) maxColor) maxColor) | col <- [0..length row - 1]]]
+        newRow = [[rgbFromInt (calculateNewValue (clamp0Max (red (row !! col) + (head initialErrMatrix !! col)) maxColor) maxColor) | col <- [0..length row - 1]]]
 updateRGBMatrix (row:remaining) maxColor centerCol rowIndex initialErrMatrix = newRow : updateRGBMatrix remaining maxColor centerCol (rowIndex + 1) (removeFirstAndAppend updatedErr (replicate (length (head updatedErr)) 0))
     where
-        newRow = [rgbFromInt (calculateNewValue (clamp0Max (red (row !! col) + (updatedErr !! mod rowIndex (length updatedErr) !! col)) maxColor) maxColor) | col <- [0..length row - 1]]
+        newRow = [rgbFromInt (calculateNewValue (clamp0Max (red (row !! col) + (head updatedErr !! col)) maxColor) maxColor) | col <- [0..length row - 1]]
         updatedErr = updateMatrix row maxColor 0 centerCol initialErrMatrix
 
 applyFSD :: Image -> Image
