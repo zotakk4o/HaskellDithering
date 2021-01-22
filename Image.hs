@@ -16,10 +16,7 @@ data Image = Image
   deriving (Show, Read)
 
 convertRGBtoGrayscale :: Rgb -> Rgb
-convertRGBtoGrayscale (Rgb red green blue) = let grayscale =
-                                                     round (0.3 * toRational red + 
-                                                            0.59 * toRational green + 
-                                                            0.11 * toRational blue)
+convertRGBtoGrayscale (Rgb red green blue) = let grayscale = (maximum [red, green, blue] + minimum [red, green, blue]) `div` 2
                                              in Rgb grayscale grayscale grayscale
 
 imageToString :: [[Rgb]] -> [String]
