@@ -69,9 +69,12 @@ applyErrDithering (Image width height maxColor content) centerCol errMatrix = Im
                                                                             maxColor
                                                                             centerCol
                                                                             0
-                                                                            [replicate (length (head content)) 0, replicate (length (head content)) 0]
+                                                                            (zeroesMatrix (length errMatrix) (length (head content)))
                                                                             errMatrix
                                                                         )
 
 removeFirstAndAppend :: [[a]] -> [a] -> [[a]]
 removeFirstAndAppend m r = tail m ++ [r]
+
+zeroesMatrix :: Int -> Int -> [[Int]]
+zeroesMatrix rows cols = [replicate cols 0 | r <- [1..rows]]
