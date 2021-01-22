@@ -31,3 +31,18 @@ split :: String -> Char -> [String]
 split [] _ = []
 split str c = newStr : split (drop (length newStr + 1) str) c 
     where newStr = takeWhile (/= c) str
+
+removeFirstAndAppend :: [[a]] -> [a] -> [[a]]
+removeFirstAndAppend m r = tail m ++ [r]
+
+zeroesMatrix :: Int -> Int -> [[Int]]
+zeroesMatrix rows cols = [replicate cols 0 | r <- [1..rows]]
+
+removeNColsEnd :: [a] -> Int -> [a]
+removeNColsEnd [] _ = []
+removeNColsEnd row n = take (length row - n) row
+
+sumMatrix :: [[Int]] -> [[Int]] -> [[Int]]
+sumMatrix [[]] b = b
+sumMatrix a [[]] = a
+sumMatrix a b = zipWith (zipWith (+)) a b

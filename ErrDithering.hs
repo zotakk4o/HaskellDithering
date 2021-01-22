@@ -1,11 +1,6 @@
 module ErrDithering where
 import Image
-
-clamp0Max :: Int -> Int -> Int
-clamp0Max x max
-    | x > max = max
-    | x < 0 = 0
-    | otherwise = x
+import Helpers
 
 fitWithZeros :: [[Int]] -> Int -> Int -> Int -> [[Int]]
 fitWithZeros [[]] _ _ _ = [[]]
@@ -17,22 +12,10 @@ fitWithZeros curr col centerCol targetNum =  [replicate ((targetNum - max 0 elem
                                                  elementsAfterCurrRow = ((targetNum - 1) - col) - elementsAfterCenterCol
                                                  reducedRow = removeNColsEnd (drop (centerCol - col) row) (col - ((targetNum - 1) - elementsAfterCenterCol))]
 
-removeNColsEnd :: [a] -> Int -> [a]
-removeNColsEnd [] _ = []
-removeNColsEnd row n = take (length row - n) row
-
-sumMatrix :: [[Int]] -> [[Int]] -> [[Int]]
-sumMatrix [[]] b = b
-sumMatrix a [[]] = a
-sumMatrix a b = zipWith (zipWith (+)) a b
-
 multiplyErrMatByScalar :: [[Double]] -> Int -> [[Int]]
 multiplyErrMatByScalar matrix scalar = map (map (\x -> floor (x * fromIntegral scalar :: Double))) matrix
 
-calculateNewValue :: Int -> Int -> Int
-calculateNewValue curr maxValue
-    | curr < ((maxValue `div` 2) + 1) = 0
-    | otherwise = maxValue
+
 
 updateMatrix :: [Rgb] -> Int -> Int -> Int -> [[Int]] -> [[Double]] -> [[Int]]
 updateMatrix [x] maxColor col centerCol currErr errMatrix = sumMatrix currErr (fitWithZeros newErrMatrix col centerCol (length (head currErr))) 
@@ -72,9 +55,3 @@ applyErrDithering (Image width height maxColor content) centerCol errMatrix = Im
                                                                             (zeroesMatrix (length errMatrix) (length (head content)))
                                                                             errMatrix
                                                                         )
-
-removeFirstAndAppend :: [[a]] -> [a] -> [[a]]
-removeFirstAndAppend m r = tail m ++ [r]
-
-zeroesMatrix :: Int -> Int -> [[Int]]
-zeroesMatrix rows cols = [replicate cols 0 | r <- [1..rows]]

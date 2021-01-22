@@ -5,7 +5,8 @@ import ProcessPPM
 import ProcessPGM
 import ProcessPBM
 import Helpers
-import ErrDithering
+import ErrDithering (applyErrDithering)
+import BayerDithering (applyBayerDithering)
 import ErrorsTables
 import Image ( imageToString, Image(content) )
 
@@ -145,6 +146,36 @@ applySierraOneThirtySecond outputFileName image
       (split outputFileName ' ' !! 1)
       (applyErrDithering image sierraOneThirtySecondCenterCol sierraOneThirtySecond)
 
+applyBayerFourByFour :: String -> Image -> IO ()
+applyBayerFourByFour outputFileName image
+  | isPPM outputFileName
+  = savePPM
+      (split outputFileName ' ' !! 1)
+      (applyBayerDithering image bayerFourByFour)
+  | isPGM outputFileName
+  = savePGM
+      (split outputFileName ' ' !! 1)
+       (applyBayerDithering image bayerFourByFour)
+  | otherwise
+  = savePBM
+      (split outputFileName ' ' !! 1)
+       (applyBayerDithering image bayerFourByFour)
+
+applyBayerEightByEight :: String -> Image -> IO ()
+applyBayerEightByEight outputFileName image
+  | isPPM outputFileName
+  = savePPM
+      (split outputFileName ' ' !! 1)
+       (applyBayerDithering image bayerEightByEight)
+  | isPGM outputFileName
+  = savePGM
+      (split outputFileName ' ' !! 1)
+       (applyBayerDithering image bayerEightByEight)
+  | otherwise
+  = savePBM
+      (split outputFileName ' ' !! 1)
+       (applyBayerDithering image bayerEightByEight)
+
 main :: IO ()
 main = do
     putStrLn welcome
@@ -169,6 +200,8 @@ main = do
                                 "7" -> do applySierraOneFourth outputFileName image
                                 "8" -> do applySierraOneSixteenth outputFileName image
                                 "9" -> do applySierraOneThirtySecond outputFileName image
+                                "10" -> do applyBayerFourByFour outputFileName image
+                                "11" -> do applyBayerEightByEight outputFileName image
                                     
                     else 
                         putStrLn incorrectChoice

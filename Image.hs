@@ -27,3 +27,14 @@ rgbFromInt value = Rgb value value value
 
 pixelToString :: Rgb -> String 
 pixelToString (Rgb red green blue) = show red ++ " " ++ show green ++ " " ++ show blue
+
+calculateNewValue :: Int -> Int -> Int
+calculateNewValue curr maxValue
+    | curr < ((maxValue `div` 2) + 1) = 0
+    | otherwise = maxValue
+
+clamp0Max :: Int -> Int -> Int
+clamp0Max x max
+    | x > max = max
+    | x < 0 = 0
+    | otherwise = x

@@ -17,8 +17,8 @@ algorithms = "Here is a list of the supported algorithms:\n\
     \7 Sierra Dithering 1/4\n\
     \8 Sierra Dithering 1/16\n\
     \9 Sierra Dithering 1/32\n\
-    \10 Ordered Dithering 1\n\
-    \11 Ordered Dithering 2\n\
+    \10 Ordered Dithering Bayer 4x4\n\
+    \11 Ordered Dithering Bayer 8x8\n\
     \Please enter only the number of the algorithm you want to execute:"
 
 incorrectChoice :: String
