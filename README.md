@@ -1,0 +1,2 @@
+# HaskellDithering
+A university project
