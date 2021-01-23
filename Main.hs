@@ -9,9 +9,11 @@ import ProcessPGM
 main :: IO ()
 main = do
     putStrLn welcome
+    putStrLn enterInput
     inputFileName <- getLine
     if isCommandValid inputFileName 'i' then
         do
+            putStrLn enterOutput
             outputFileName <- getLine
             if isCommandValid outputFileName 'o' then
                 do
@@ -32,6 +34,8 @@ main = do
                                 "9" -> do applySierraOneThirtySecond outputFileName image
                                 "10" -> do applyBayerFourByFour outputFileName image
                                 "11" -> do applyBayerEightByEight outputFileName image
+                                
+                            putStrLn success
                                     
                     else 
                         putStrLn incorrectChoice

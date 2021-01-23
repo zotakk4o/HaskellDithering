@@ -3,8 +3,13 @@ module Messages where
 welcome :: String
 welcome = "The following commands are supported: \n\
     \1. i <filename>\n\
-    \2. o <filename>\n\
-    \Please enter a command:"
+    \2. o <filename>"
+
+enterInput :: String
+enterInput = "Please enter an input file: "
+
+enterOutput :: String
+enterOutput = "Please enter an output file: "
 
 algorithms :: String
 algorithms = "Here is a list of the supported algorithms:\n\
