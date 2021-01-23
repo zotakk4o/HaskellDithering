@@ -1,5 +1,5 @@
 module ProcessPGM (savePGM, loadPGM) where
-import Image
+import Image hiding(imageToString)
 import Debug.Trace
 
 textToImage :: String -> [String] -> Int -> Int -> Int -> [[Rgb]] -> [Rgb] -> Image
@@ -35,6 +35,9 @@ textToImage format (x:remainingContent) width height maxColor content currentCon
             maxColor
             content
             (currentContent ++ [rgbFromInt (read x :: Int)])
+
+imageToString :: [[Rgb]] -> [String]
+imageToString strs = [show (red px) | px <- concat strs]
 
 savePGM :: FilePath -> Image -> IO ()
 savePGM path (Image width height maxColor content) =
