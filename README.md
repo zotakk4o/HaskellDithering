@@ -32,7 +32,7 @@
 ```
 16 0 96 0 0 16
 ```
- - In the next step we are going to calculate an **extended error matrix** for each value of this row as follows:
+ - In the next step we are going to calculate an **extended error matrix** for each value of this row and sum them all as follows:
  
 ```
 0    0   7/16       ->  0          (7 * 1)/16 0 0 0 0
