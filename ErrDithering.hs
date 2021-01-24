@@ -28,9 +28,7 @@ updateMatrix (x:xs) maxColor col centerCol currErr errMatrix = updateMatrix xs m
         newErrMatrix = multiplyErrMatByScalar errMatrix (newValue - calculateNewValue newValue maxColor)
 
 updateRGBMatrix :: [[Rgb]] -> Int -> Int -> Int -> [[Int]] -> [[Double]] -> [[Rgb]]
-updateRGBMatrix [row] maxColor centerCol rowIndex initialErrMatrix errMatrix = newRow
-    where
-        newRow = [[rgbFromInt (calculateNewValue (clamp0Max (red (row !! col) + (head initialErrMatrix !! col)) maxColor) maxColor) | col <- [0..length row - 1]]]
+updateRGBMatrix [] _ _ _ _ _ = []
 updateRGBMatrix (row:remaining) maxColor centerCol rowIndex initialErrMatrix errMatrix = newRow : updateRGBMatrix 
                                                                                                     remaining 
                                                                                                     maxColor 
